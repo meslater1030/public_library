@@ -1,65 +1,83 @@
-
-whole_library = {}
-
 # Library object
+class Library:
+    def __init__(self):
+        self.shelves = {}
 
-
-class Library(object):
-    # the library creates space for its shelves on initialization
-    def __init__(self, num_shelves):
-        self.num_shelves = num_shelves
-        for shelf in range(1, self.num_shelves + 1):
-            whole_library[shelf] = []
+    def addShelf(self, shelf):
+        self.shelves[shelf.num] = shelf
 
     # reports on all books in the library
     def report(self):
-        for books in whole_library.itervalues():
-            for book in books:
-                print book + '\t'
+        if self.shelves:
+            print('All books in the Library:')
+            for shelf_num in self.shelves:
+                shelf = self.shelves[shelf_num]
+                shelf.report()
+        else:
+            print('Library has no shelves yet')
 
 # Shelf object
 
 
-class Shelf(object):
+class Shelf:
     # the shelf knows which shelf it is
-    def __init__(self, shelf_num):
-        self.shelf_num = shelf_num
+    def __init__(self, num):
+        self.num = num
+        self.books = {}
+
+    def addBook(self, book):
+        self.books[book.name] = book
+
+    def removeBook(self, book):
+        del self.books[book.name]
 
     # this function prints out the books located on this shelf
-    def which_books(self):
-        for book in whole_library[self.shelf_num]:
-            print book
+    def report(self):
+        if self.books:
+            print("Shelf {0} books:".format(self.num))
+            for book_name in self.books:
+                print("\t{0}".format(book_name))
+        else:
+            print("Shelf {0} has no books.".format(self.num))
 
 # Book object
 
 
-class Book(object):
+class Book:
     # the book knows which book it is
     def __init__(self, name):
         self.name = name
 
     # this function puts the book on a shelf
-    def enshelf(self, shelf_num):
-        whole_library[shelf_num] = whole_library[shelf_num] + [self.name]
+    def enshelf(self, shelf):
+        self.current_shelf = shelf
+        shelf.addBook(self)
 
     # this function finds the book and removes it from its shelf
     def unshelf(self):
-        try:
-            for shelf, books in whole_library.iteritems():
-                for book in books:
-                    if self.name == book:
-                        whole_library[shelf].remove(book)
-        except TypeError:
-            pass
+        if self.current_shelf:
+            self.current_shelf.removeBook(self)
+            self.current_shelf = None
 
-this_library = Library(6)
+this_library = Library()
 this_library.report()
-shelf3 = Shelf(3)
-shelf3.which_books()
-this_book = Book('The Pearl')
-this_book.enshelf(2)
+
+shelf1 = Shelf(1)
 shelf2 = Shelf(2)
-shelf2.which_books()
+shelf3 = Shelf(3)
+shelf3.report()
+
+this_library.addShelf(shelf1)
+this_library.addShelf(shelf2)
+this_library.addShelf(shelf3)
+
+this_book = Book('The Pearl')
+this_book.enshelf(shelf2)
+
+shelf2.report()
 this_book.unshelf()
-this_book.enshelf(3)
-shelf3.which_books()
+
+this_book.enshelf(shelf3)
+shelf3.report()
+
+this_library.report()
