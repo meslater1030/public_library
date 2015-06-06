@@ -10,9 +10,8 @@ class Library:
     def report(self):
         if self.shelves:
             print('All books in the Library:')
-            for shelf_num in self.shelves:
-                shelf = self.shelves[shelf_num]
-                shelf.report()
+            for shelf_num, shelf in self.shelves.iteritems():
+                shelf.report()  # simplify report using shelf string method
         else:
             print('Library has no shelves yet')
 
@@ -25,6 +24,11 @@ class Shelf:
         self.num = num
         self.books = {}
 
+    # adding string method
+
+    def __str__(self):
+        return self.num
+
     def addBook(self, book):
         self.books[book.name] = book
 
@@ -35,8 +39,8 @@ class Shelf:
     def report(self):
         if self.books:
             print("Shelf {0} books:".format(self.num))
-            for book_name in self.books:
-                print("\t{0}".format(book_name))
+            for book_name, book in self.books.iteritems():
+                print book
         else:
             print("Shelf {0} has no books.".format(self.num))
 
@@ -58,6 +62,9 @@ class Book:
         if self.current_shelf:
             self.current_shelf.removeBook(self)
             self.current_shelf = None
+
+    def __str__(self):
+        return self.name
 
 this_library = Library()
 this_library.report()
